@@ -39,7 +39,7 @@ authRouter.post('/login',async(req,res)=>{
       if(!existedUser) throw new Error('User is not found');
       //checking password
       const isPasswordcorrect =  await bcrypt.compare(password,existedUser.password);
-      console.log(isPasswordcorrect);
+      
       
       if(!isPasswordcorrect) throw new Error('Invalid Credentials');
       // generate token.

@@ -11,14 +11,6 @@ const userSchema = new Schema({
     password:{
         type:String,
     },
-    firstname:{
-        type:String,
-        required: true,
-    },
-    lastname:{
-        type:String,
-        required:true,
-    },
     authprovider:{
         type:String,
         enum : ["local","google"],
