@@ -6,3 +6,7 @@ export const signupvalidation = z.object({
     lastname : z.string().min(3),
     authProvider : z.enum(['local','google']).default('local'),
 });
+export const loginvalidation = z.object({
+    email : z.string().email(),
+    password : z.string().min(6),
+})
