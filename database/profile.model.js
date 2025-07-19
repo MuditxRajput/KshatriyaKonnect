@@ -12,16 +12,23 @@ const profileSchema = mongoose.Schema({
         required:true,
     },
     age:{
-        type:Number,
+        type:String,
         required:true,
     },
     interestedIn:{
         type:String,
         enum:['male','female','both'],
     },
-    photo:{
-        type:[String],
-    },
+    photo:[
+        {
+            public_id:{
+                type:String,
+            },
+            url :{
+                type:String,
+            }
+        }
+    ],
     education:{
         type:String,
         enum : ['12th','graduate','master','job'],
@@ -32,7 +39,7 @@ const profileSchema = mongoose.Schema({
         required: true,
     },
     height:{
-        type:Number,
+        type:String,
     },
     location:{
         type:
@@ -47,7 +54,8 @@ const profileSchema = mongoose.Schema({
     },
     user_id:{
         type:mongoose.Types.ObjectId,
-        ref : 'User'
+        ref : 'User',
+        require : true,
     }
 },{timestamps:true})
 profileSchema.index({location:'2dsphere'});

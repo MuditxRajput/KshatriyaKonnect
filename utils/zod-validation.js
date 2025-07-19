@@ -11,11 +11,10 @@ export const loginvalidation = z.object({
 export const profileValidation = z.object({
         firstname: z.string().min(3),
         lastname : z.string().min(3),
-        age : z.number().min(18).max(70),
+        age: z.coerce.number().min(18).max(70),
         interestedIn : z.enum(['male','female','both']),
-        photo : z.array(),
         education : z.enum(['12th','graduate','master','job']),
         gender : z.enum(['male','female']),
-        height : z.number(),
+        height : z.string(),
 
 }).passthrough();
