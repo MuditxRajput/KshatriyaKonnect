@@ -19,7 +19,6 @@ profileRouter.post('/new', auth_middleware, upload.array('photo', 5), async (req
     const { firstname, lastname, age, interestedIn, education, gender, height, longitude, latitude } = parsed;
     // before created user profile we have to save the user profile in the s3 and get the link
     const photo = req.files.map((file) => file.path);
-    console.log("photo", photo);
 
     const cloudinary_image_url = await uploadImages(photo);
     const profile = new Profile({
@@ -75,13 +74,12 @@ profileRouter.patch('/update', auth_middleware, upload.array('photo', 5), async 
     if (photos && photos.length > 0) {
       //upload in cloudinary
       const images_url = await uploadImages(photos);
-      console.log("new image", images_url);
+
 
       const previous_images = existed_user_profile.photo;
       if (replaceIds.length > 0) {
         images_url.forEach((url, idx) => {
           const replacedIndex = previous_images.findIndex(img => img.public_id === replaceIds[idx]);
-          console.log(replacedIndex);
 
           if (replacedIndex !== -1) {
             previous_images[replacedIndex] = url;

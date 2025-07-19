@@ -9,9 +9,9 @@ export const auth_middleware = async (req, res, next) => {
       return res.status(401).json({ message: 'No token provided' });
     }
     const decode =  jwt.verify(token,process.env.jwtkey);
-    const user = await User.findById(decode.id).select('_password');
+    const user = await User.findById(decode.id).select('-password');
     if(!user)  return res.status(403).json({ message: 'Unauthorized user' });
-    req.user =user;
+    req.user = user;
     next();
   } catch (error) {
       console.error("Auth error:", error.message);
