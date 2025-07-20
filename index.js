@@ -12,6 +12,6 @@ app.use(express.json());
 app.use('/api/auth',authRouter);
 app.use('/api/profile',profileRouter);
 app.use('/api/user',userrouter);
-app.use('/api//interaction',userinteraction);
+app.use('/api/interaction',userinteraction);
  dbConnection().then((res)=>app.listen(process.env.PORT,()=>console.log(`${res.sucess} server is up at @${process.env.PORT}`))).catch((err)=>console.log(err));
 // app.listen(process.env.PORT,()=>console.log("Server is up"))
