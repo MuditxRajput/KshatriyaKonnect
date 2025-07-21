@@ -16,14 +16,15 @@ userinteraction.post('/like/:toUserId', auth_middleware, async (req, res) => {
             { action: 'like' },
             { upsert: true, new: true }
         );
-
+        const existedMatch = await Match.findOne({users : {$all:[toUserId,fromUserId]}});
+        if(existedMatch) return res.status(200).json({success:true,msg:'Already Match'})
         if (existedInteraction) {
             // enter the data in the match schema...
             const match = new Match({
                 users : [toUserId,fromUserId],
             });
             await match.save();
-            return res.status(200).json({success:true,msg:`It's a Match`})
+            return res.status(200).json({success:true,msg:`Yeaaaah It's a Match 💘`})
         }
         return res.status(200).json({ success: true, msg: `${fromUserId} like ${toUserId}` })
     } catch (error) {
