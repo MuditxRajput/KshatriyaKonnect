@@ -7,9 +7,14 @@ import cookieParser from 'cookie-parser';
 import userrouter from './routes/userrouter.js';
 import userinteraction from './routes/userinteraction.js';
 import matchRouter from './routes/matchesrouter.js';
+import cors from 'cors'
 const app = express();
 app.use(cookieParser());
 app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:3001', // or wherever your frontend runs
+  credentials: true,               // allow cookies to be sent
+}));
 app.use('/api/auth',authRouter);
 app.use('/api/profile',profileRouter);
 app.use('/api/user',userrouter);

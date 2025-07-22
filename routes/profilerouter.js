@@ -12,25 +12,31 @@ profileRouter.post('/new', auth_middleware, upload.array('photo', 5), async (req
     const id = req.user._id;
     const existed_user_profile = await Profile.findOne({ user_id: id });
     if (existed_user_profile) return res.status(400).json({ success: false, msg: 'User profile is already there' })
-    const parsed = profileValidation.parse(req.body);
+     
+      const cleanBody = JSON.parse(JSON.stringify(req.body));
+      console.log(cleanBody);
+      
+const parsed = profileValidation.parse(cleanBody);
+console.log("parsed",parsed);
+
+    // const parsed = profileValidation.parse(req.body);
     if (!parsed) throw new Error('Invalid data');
-    parsed["longitude"] = req.body.longitude;
-    parsed["latitude"] = req.body.latitude;
-    const { firstname, lastname, age, interestedIn, education, gender, height, longitude, latitude } = parsed;
+    const { firstname, lastname, age, interestedIn, education, gender, looking_for, place_of_Origin,location } = parsed;
     // before created user profile we have to save the user profile in the s3 and get the link
     const photo = req.files.map((file) => file.path);
-
     const cloudinary_image_url = await uploadImages(photo);
+    console.log("cloundinary url",cloudinary_image_url);
+    
     const profile = new Profile({
       firstname,
       lastname,
       age,
       interestedIn,
       education,
+      looking_for,
       gender,
-      height,
-      longitude,
-      latitude,
+      place_of_Origin,
+      location,
       photo: cloudinary_image_url,
       user_id: req.user._id
     })
@@ -47,7 +53,7 @@ profileRouter.post('/new', auth_middleware, upload.array('photo', 5), async (req
     else {
       return res.status(400).json({
         success: false,
-        message: error
+        message: error.message
       })
     }
 

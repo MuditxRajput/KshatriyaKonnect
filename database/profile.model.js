@@ -38,19 +38,25 @@ const profileSchema = mongoose.Schema({
         enum : ['male','female'],
         required: true,
     },
-    height:{
+    location:{
+        type:String,
+        required: true,
+    },
+    bio:{
+        type:String,
+        default : 'null'
+    },
+    place_of_Origin:{
+         type: String,
+         required: true,
+    },
+    gotra:{
         type:String,
     },
-    location:{
-        type:
-        {
-            type : String,
-            enum:['Point'],            
-        },
-        coordinates:{
-            type:[Number],
-           
-        }
+    looking_for:{
+        type: String,
+        enum : ['Serious Relationship','Friendship','Casual Dating','Marriage'],
+        required : true,
     },
     user_id:{
         type:mongoose.Types.ObjectId,
@@ -58,5 +64,4 @@ const profileSchema = mongoose.Schema({
         require : true,
     }
 },{timestamps:true})
-profileSchema.index({location:'2dsphere'});
 export const Profile = mongoose.model("profile",profileSchema);

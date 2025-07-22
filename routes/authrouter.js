@@ -6,54 +6,57 @@ import { parse } from 'dotenv';
 import { generatejwt } from '../utils/generate-jwt.js';
 const authRouter = express.Router();
 
-authRouter.post('/signup',async(req,res)=>{
+authRouter.post('/signup', async (req, res) => {
    try {
-      const parsedData  = signupvalidation.parse(req.body);
-      const{email,password,firstname,lastname,authProvider} = parsedData;
-      const existedUser = await User.findOne({email});
-      if(existedUser) throw new Error("User existed");
+      const parsedData = signupvalidation.parse(req.body);
+      const { email, password, authProvider } = parsedData;
+      const existedUser = await User.findOne({ email });
+      if (existedUser) throw new Error("User existed");
       // hased password
-      const hashedPassword = await bcrypt.hash(password,10);
+      const hashedPassword = await bcrypt.hash(password, 10);
       const user = new User({
          email,
-         password : hashedPassword,
-         firstname,
-         lastname, 
+         password: hashedPassword,
          authProvider
       });
       await user.save();
       return res.json({ success: true, msg: "Sign up successfully" });
 
    } catch (error) {
-   
-      return res.json({success:false, msg: error.message});
+
+      return res.json({ success: false, msg: error.message });
 
    }
-  
+
 })
-authRouter.post('/login',async(req,res)=>{
+authRouter.post('/login', async (req, res) => {
    try {
       const parsedData = loginvalidation.parse(req.body);
-      const{email,password} = parsedData;
-      const existedUser = await User.findOne({email});
-      if(!existedUser) throw new Error('User is not found');
+      const { email, password } = parsedData;
+      const existedUser = await User.findOne({ email });
+      if (!existedUser) throw new Error('User is not found');
       //checking password
-      const isPasswordcorrect =  await bcrypt.compare(password,existedUser.password);
+      console.log(existedUser);
       
-      
-      if(!isPasswordcorrect) throw new Error('Invalid Credentials');
+      const isPasswordcorrect = await bcrypt.compare(password, existedUser.password);
+
+
+      if (!isPasswordcorrect) throw new Error('Invalid Credentials');
       // generate token.
-      const token = generatejwt(existedUser._id,existedUser.email);
-      if(!token.success) throw new Error(token.error);
+      const token = generatejwt(existedUser._id, existedUser.email);
+      if (!token.success) throw new Error(token.error);
 
       // wrap the json token inside the cookie and send inthe response..
-      res.cookie("token",token.token,{
-         httpOnly : true,
-         maxAge: 30 * 24 * 60 * 60 * 1000,
-      }).status(200)
-      .json({success : true,msg :'user login successfully'})
+      res.cookie("token", token.token, {
+   httpOnly: true,
+   maxAge: 30 * 24 * 60 * 60 * 1000,
+   sameSite: "Lax", // Works with secure: false
+   secure: false,
+   // Remove domain property for localhost development
+}).status(200)
+         .json({ success: true, msg: 'user login successfully' })
    } catch (error) {
-      res.status(400).json({msg:error.message});
+      res.status(400).json({ msg: error.message });
    }
 
 })
