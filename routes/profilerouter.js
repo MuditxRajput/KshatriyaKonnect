@@ -12,21 +12,15 @@ profileRouter.post('/new', auth_middleware, upload.array('photo', 5), async (req
     const id = req.user._id;
     const existed_user_profile = await Profile.findOne({ user_id: id });
     if (existed_user_profile) return res.status(400).json({ success: false, msg: 'User profile is already there' })
-     
-      const cleanBody = JSON.parse(JSON.stringify(req.body));
-      console.log(cleanBody);
-      
-const parsed = profileValidation.parse(cleanBody);
-console.log("parsed",parsed);
-
+    const cleanBody = JSON.parse(JSON.stringify(req.body));
+    const parsed = profileValidation.parse(cleanBody);
     // const parsed = profileValidation.parse(req.body);
     if (!parsed) throw new Error('Invalid data');
-    const { firstname, lastname, age, interestedIn, education, gender, looking_for, place_of_Origin,location } = parsed;
+    const { firstname, lastname, age, interestedIn,gotra ,education, gender, looking_for, place_of_Origin, location } = parsed;
     // before created user profile we have to save the user profile in the s3 and get the link
     const photo = req.files.map((file) => file.path);
     const cloudinary_image_url = await uploadImages(photo);
-    console.log("cloundinary url",cloudinary_image_url);
-    
+
     const profile = new Profile({
       firstname,
       lastname,
@@ -36,6 +30,7 @@ console.log("parsed",parsed);
       looking_for,
       gender,
       place_of_Origin,
+      gotra,
       location,
       photo: cloudinary_image_url,
       user_id: req.user._id
@@ -104,5 +99,16 @@ profileRouter.patch('/update', auth_middleware, upload.array('photo', 5), async 
     console.error(error);
     res.status(500).json({ success: false, msg: "Server error", error: error.message });
   }
+})
+profileRouter.get('/info',auth_middleware, async(req,res)=>{
+    try {
+      const id = req.user._id;
+      const profile = await Profile.findOne({user_id:id});
+      if(!profile) return res.status(400).json({msg:'Profile not found',success:false});
+      return res.status(200).json({success:true,profile});
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({msg:false,error:error.message});
+    }
 })
 export default profileRouter;
