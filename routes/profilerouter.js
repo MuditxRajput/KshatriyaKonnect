@@ -58,15 +58,12 @@ profileRouter.patch('/update', auth_middleware, upload.array('photo', 5), async 
   try {
     const id = req.user._id;
     const existed_user_profile = await Profile.findOne({ user_id: id });
-
-
     if (!existed_user_profile) return res.status(400).json({ success: false, msg: 'User profile is already there' });
 
     const updates = req.body;
     const photos = req.files.map((file) => file.path);
-    const replaceIds = updates.replaceIds ? JSON.parse(updates.replaceIds) : [];
-
-    const allowedfield = ['interestedIn', 'education', 'photo'];
+    const replaceIds = updates.replaceIndex ? JSON.parse(updates.replaceIndex) : [];
+    const allowedfield = ['location', 'education', 'photo','bio','age','gotra'];
     allowedfield?.map((fields) => {
       if (updates[fields] !== "undefined" && fields !== "photo") {
         existed_user_profile[fields] = updates[fields];
@@ -75,13 +72,10 @@ profileRouter.patch('/update', auth_middleware, upload.array('photo', 5), async 
     if (photos && photos.length > 0) {
       //upload in cloudinary
       const images_url = await uploadImages(photos);
-
-
       const previous_images = existed_user_profile.photo;
       if (replaceIds.length > 0) {
         images_url.forEach((url, idx) => {
           const replacedIndex = previous_images.findIndex(img => img.public_id === replaceIds[idx]);
-
           if (replacedIndex !== -1) {
             previous_images[replacedIndex] = url;
           }
@@ -93,6 +87,8 @@ profileRouter.patch('/update', auth_middleware, upload.array('photo', 5), async 
       }
 
     }
+
+    
     await existed_user_profile.save();
     res.status(200).json({ success: true, msg: "Profile updated", data: existed_user_profile });
   } catch (error) {
