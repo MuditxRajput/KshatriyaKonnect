@@ -16,7 +16,7 @@ profileRouter.post('/new', auth_middleware, upload.array('photo', 5), async (req
     const parsed = profileValidation.parse(cleanBody);
     // const parsed = profileValidation.parse(req.body);
     if (!parsed) throw new Error('Invalid data');
-    const { firstname, lastname, age, interestedIn,gotra ,education, gender, looking_for, place_of_Origin, location } = parsed;
+    const { firstname, lastname, age, interestedIn,gotra ,education, gender, looking_for, place_of_Origin, location,bio } = parsed;
     // before created user profile we have to save the user profile in the s3 and get the link
     const photo = req.files.map((file) => file.path);
     const cloudinary_image_url = await uploadImages(photo);
@@ -32,6 +32,7 @@ profileRouter.post('/new', auth_middleware, upload.array('photo', 5), async (req
       place_of_Origin,
       gotra,
       location,
+      bio,
       photo: cloudinary_image_url,
       user_id: req.user._id
     })
