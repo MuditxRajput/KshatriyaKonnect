@@ -36,7 +36,7 @@ authRouter.post('/login', async (req, res) => {
       const existedUser = await User.findOne({ email });
       if (!existedUser) throw new Error('User is not found');
       //checking password
-      console.log(existedUser);
+  
       
       const isPasswordcorrect = await bcrypt.compare(password, existedUser.password);
 
